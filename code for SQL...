@@ -1,0 +1,32 @@
+import statistics
+import mysql.connector as mycon
+
+con = mycon.connect(
+    host="localhost", user="root", password="your_password", database="your_database"
+)
+cursor = con.cursor()
+
+# 1. SQL Aggregate Functions (MIN, MAX, AVG)
+query_sql = "SELECT MIN(price), MAX(price), AVG(price) FROM fastfood2"
+cursor.execute(query_sql)
+min_price, max_price, avg_price = cursor.fetchone()
+
+print(f"Minimum Price (SQL): {min_price}")
+print(f"Maximum Price (SQL): {max_price}")
+print(f"Average Price / Mean (SQL): {avg_price}")
+
+# 2. Python Statistics Functions (Mean, Median, Mode)
+query_all = "SELECT price FROM fastfood2"
+cursor.execute(query_all)
+prices = [row[0] for row in cursor.fetchall()]
+
+if prices:
+    print(f"Mean (Python): {statistics.mean(prices)}")
+    print(f"Median (Python): {statistics.median(prices)}")
+    try:
+        print(f"Mode (Python): {statistics.mode(prices)}")
+    except statistics.StatisticsError:
+        print("Mode: Saare prices unique hain (Koi mode nahi hai)")
+
+cursor.close()
+con.close()
